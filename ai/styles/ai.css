@@ -1,1 +1,50 @@
+body {
+  margin:0;
+  background:#05070f;
+  color:white;
+  font-family:system-ui;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+}
 
+.app {
+  width:95%;
+  max-width:420px;
+  text-align:center;
+}
+
+h1 {
+  color:#00e5ff;
+  text-shadow:0 0 10px #00e5ff;
+}
+
+.chat {
+  height:300px;
+  overflow-y:auto;
+  background:#0a0f1f;
+  border-radius:12px;
+  padding:10px;
+  margin-bottom:10px;
+}
+
+input {
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:10px;
+  margin-bottom:8px;
+  background:#111;
+  color:white;
+}
+
+button {
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:12px;
+  background:linear-gradient(45deg,#00e5ff,#00ff99);
+  font-weight:bold;
+  cursor:pointer;
+}
