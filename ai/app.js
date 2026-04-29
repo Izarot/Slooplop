@@ -2,13 +2,14 @@ import { generateResponse } from "./brain/core.js";
 import { memory } from "./brain/memory.js";
 import { mood } from "./brain/mood.js";
 
-const inputBox = document.querySelector("input");
-const sendBtn = document.querySelector("button");
-const chatBox = document.querySelector(".chat-box");
+// ✅ CORRECT SELECTORS (MATCH YOUR HTML)
+const inputBox = document.getElementById("input");
+const sendBtn = document.getElementById("sendBtn");
+const chatBox = document.getElementById("chat");
 
-// SAFETY CHECK (prevents silent failure)
+// safety check
 if (!inputBox || !sendBtn || !chatBox) {
-  console.error("UI elements not found. Check class names.");
+  console.error("Elements not found. Check IDs.");
 }
 
 // BUTTON CLICK
@@ -25,8 +26,8 @@ sendBtn.onclick = () => {
   inputBox.value = "";
 };
 
-// ENTER KEY SUPPORT
-inputBox.addEventListener("keypress", (e) => {
+// ENTER KEY
+inputBox.addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
     sendBtn.click();
   }
@@ -35,7 +36,7 @@ inputBox.addEventListener("keypress", (e) => {
 // MESSAGE RENDER
 function addMessage(type, text) {
   const div = document.createElement("div");
-  div.className = type === "user" ? "msg user" : "msg ai";
+  div.className = type;
   div.textContent = text;
 
   chatBox.appendChild(div);
