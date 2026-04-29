@@ -4,52 +4,49 @@ const chat = document.getElementById("chat");
 const input = document.getElementById("input");
 const sendBtn = document.getElementById("sendBtn");
 
-// ===== RENDER =====
+// ===== ADD MESSAGE =====
 
-function addUserMessage(text) {
+function addMessage(text, type) {
   const msg = document.createElement("div");
-  msg.className = "msg user";
+  msg.className = "msg " + type;
   msg.textContent = text;
   chat.appendChild(msg);
-}
 
-function addAIMessage(text) {
-  const msg = document.createElement("div");
-  msg.className = "msg ai";
-  msg.textContent = "------------------ " + text;
-  chat.appendChild(msg);
-}
-
-function scrollToBottom() {
   chat.scrollTop = chat.scrollHeight;
 }
 
-// ===== CORE FLOW =====
+// ===== HANDLE SEND =====
 
 function handleSend() {
   const text = input.value.trim();
   if (!text) return;
 
-  addUserMessage(text);
+  // USER LEFT
+  addMessage(text, "user");
 
   input.value = "";
-  scrollToBottom();
 
-  // fake thinking (clean, single instance)
+  // AI THINKING (optional but nice)
   const thinking = document.createElement("div");
   thinking.className = "msg ai thinking";
-  thinking.textContent = "------------------ Thinking...";
+  thinking.textContent = "...";
   chat.appendChild(thinking);
-  scrollToBottom();
+  chat.scrollTop = chat.scrollHeight;
 
   setTimeout(() => {
     thinking.remove();
 
-    const response = generateResponse(text);
-    addAIMessage(response);
+    let response;
+    try {
+      response = generateResponse(text);
+    } catch (e) {
+      response = "Error in brain ⚡";
+    }
 
-    scrollToBottom();
-  }, 300);
+    // AI RIGHT
+    addMessage(response, "ai");
+
+  }, 200);
 }
 
 // ===== EVENTS =====
