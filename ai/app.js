@@ -1,58 +1,49 @@
-import { generateResponse } from "./brain/core.js";
-import { memory } from "./brain/memory.js";
-import { mood } from "./brain/mood.js";
+import { generateResponse } from "../brain/core.js";
+import { Memory } from "../brain/memory.js";
+import { Mood } from "../brain/mood.js";
 
-const chat = document.getElementById("chat");
-const input = document.getElementById("input");
+const memory = new Memory();
+const mood = new Mood();
+
+const inputEl = document.getElementById("input");
 const sendBtn = document.getElementById("sendBtn");
 
-// ===== RENDER =====
+sendBtn.onclick = sendMessage;
+inputEl.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") sendMessage();
+});
 
-function addMessage(text, type) {
-  const msg = document.createElement("div");
-  msg.className = "msg " + type;
-  msg.textContent = text;
-  chat.appendChild(msg);
-
-  chat.scrollTop = chat.scrollHeight;
-}
-
-// ===== HANDLE =====
-
-function handleSend() {
-  const text = input.value.trim();
+function sendMessage() {
+  const text = inputEl.value.trim();
   if (!text) return;
 
   addMessage(text, "user");
-  input.value = "";
 
-  // thinking
-  const thinking = document.createElement("div");
-  thinking.className = "msg ai thinking";
-  thinking.textContent = "...";
-  chat.appendChild(thinking);
+  const response = generateResponse(text, memory, mood);
 
   setTimeout(() => {
-    thinking.remove();
-
-    let response;
-
-    try {
-      response = generateResponse(text, memory, mood);
-    } catch (e) {
-      console.error(e);
-      response = "Brain crashed ⚡";
-    }
-
     addMessage(response, "ai");
-
+    renderMath(); // 🔥 important
   }, 200);
+
+  inputEl.value = "";
 }
 
-// ===== EVENTS =====
+function addMessage(text, sender) {
+  const chat = document.getElementById("chat");
 
-sendBtn.addEventListener("click", handleSend);
+  const msg = document.createElement("div");
+  msg.className = sender === "user" ? "msg user" : "msg ai";
 
-input.addEventListener("keypress", (e) => {
-  if (e.key === "Enter") handleSend();
-});
+  msg.innerHTML = text; // needed for LaTeX
+
+  chat.appendChild(msg);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+// 🧮 render LaTeX using KaTeX
+function renderMath() {
+  if (window.renderMathInElement) {
+    renderMathInElement(document.body);
+  }
+}
