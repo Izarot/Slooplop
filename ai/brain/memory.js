@@ -1,11 +1,18 @@
-export const memory = {
-  messages: [],
-
-  add(role, text) {
-    this.messages.push({ role, text });
-
-    if (this.messages.length > 50) {
-      this.messages.shift();
-    }
+export class Memory {
+  constructor() {
+    this.messages = [];
+    this.data = {};
   }
-};
+
+  add(type, text) {
+    this.messages.push({ type, text });
+  }
+
+  set(key, value) {
+    this.data[key] = value;
+  }
+
+  getLast(key) {
+    return this.data[key];
+  }
+}
