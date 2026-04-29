@@ -1,41 +1,84 @@
 export function generateResponse(input, memory, mood) {
   const text = input.toLowerCase();
 
-  // update systems
   memory.add("user", input);
   mood.update(input);
 
   const context = getContext(memory);
+  const intent = detectIntent(text);
 
-  // === INTENT + CONTEXT ===
-
-  if (text.includes("hello") || text.includes("hi")) {
-    return style("Hello ⚡", mood);
-  }
-
-  if (text.includes("how are you")) {
-    return style("Running stable. Learning you ⚡", mood);
-  }
-
-  if (text.includes("code")) {
-    return style("We build. What exactly? ⚡💻", mood);
-  }
-
-  // === CONTEXT-AWARE RESPONSES ===
-
-  if (context.includes("hello") && text.includes("again")) {
-    return style("You already said hello. Loop detected ⚡", mood);
-  }
-
-  if (context.includes("code") && text.includes("help")) {
-    return style("You're trying to build something. Be specific.", mood);
-  }
-
-  // === FALLBACK (dynamic brain) ===
-  return generateDynamic(text, context, mood);
+  return routeIntent(intent, text, context, mood, memory);
 }
 
-// 🔍 extract recent context
+// 🎯 intent detection
+function detectIntent(text) {
+  if (text.includes("hello") || text.includes("hi")) return "greet";
+  if (text.includes("code") || text.includes("build")) return "build";
+  if (text.includes("how are you")) return "status";
+  if (text.includes("what")) return "question";
+  if (isMath(text)) return "math";
+  if (text.length < 5) return "low";
+  return "unknown";
+}
+
+// 🧠 router
+function routeIntent(intent, text, context, mood, memory) {
+
+  switch (intent) {
+
+    case "greet":
+      return style("Hello.", mood);
+
+    case "status":
+      return style("Running stable. Learning.", mood);
+
+    case "build":
+      memory.add("topic", "build");
+      return style("What are we building?", mood);
+
+    case "question":
+      return style("Be specific.", mood);
+
+    case "math":
+      return solveMath(text);
+
+    case "low":
+      return style("Too vague.", mood);
+
+    default:
+      return dynamic(text, context, mood, memory);
+  }
+}
+
+// 🔥 dynamic fallback
+function dynamic(text, context, mood, memory) {
+  const lastTopic = memory.getLast("topic");
+
+  if (lastTopic === "build") {
+    return style("You're building something. Define the feature.", mood);
+  }
+
+  if (context.includes("hello")) {
+    return style("Continue.", mood);
+  }
+
+  if (text.includes("fuck") || text.includes("fck")) {
+    return style("Say it clearly.", mood);
+  }
+
+  if (text.length > 25) {
+    return style("Good. Now refine it.", mood);
+  }
+
+  return style("Say something useful.", mood);
+}
+
+// 🎭 style (clean)
+function style(text, mood) {
+  return text;
+}
+
+// 🔍 context
 function getContext(memory) {
   return memory.messages
     .slice(-5)
@@ -43,33 +86,20 @@ function getContext(memory) {
     .join(" ");
 }
 
-// 🎭 style system
-function style(base, mood) {
-  if (mood.current === "friendly") return base + " 😊";
-  if (mood.current === "aggressive") return base + " ⚠️";
-  if (mood.current === "focused") return base + " 💻";
-  return base;
+// 🧮 math detection
+function isMath(text) {
+  return /[0-9+\-*/^=]/.test(text);
 }
 
-// 🎲 dynamic response generator
-function generateDynamic(text, context, mood) {
-  const patterns = [
-    `That input has structure.`,
-    `You're exploring something.`,
-    `Not random. There's intent here.`,
-    `Push further.`,
-    `Explain what you actually want.`,
-  ];
+// 🧠 math solver + LaTeX output
+function solveMath(text) {
+  try {
+    const clean = text.replace(/[^0-9+\-*/().^]/g, "");
 
-  // context influence
-  if (context.includes("build")) {
-    return style("You're in creation mode. Define the goal.", mood);
+    const result = Function(`return (${clean})`)();
+
+    return `\\(${clean} = ${result}\\)`; // LaTeX format
+  } catch {
+    return "Invalid math expression.";
   }
-
-  if (text.length > 20) {
-    return style("That's detailed. I can work with that.", mood);
-  }
-
-  const pick = patterns[Math.floor(Math.random() * patterns.length)];
-  return style(pick, mood);
 }
