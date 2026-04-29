@@ -1,2 +1,2 @@
 # SloopLop
-SloopLop ⚡ Custom AI + Generative System (Chatbot + Image Engine)
+SloopLop Custom AI + Generative System (Chatbot + Image Engine)
