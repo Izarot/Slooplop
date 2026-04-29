@@ -24,26 +24,37 @@ h1 {
   border-radius: 12px;
   padding: 10px;
   margin-bottom: 10px;
+
+  display: flex;
+  flex-direction: column;
 }
 
 /* ===== MESSAGES ===== */
 
 .msg {
+  max-width: 70%;
+  padding: 8px 12px;
   margin: 6px 0;
-  white-space: pre-wrap;
+  border-radius: 10px;
+  word-wrap: break-word;
 }
 
+/* USER LEFT */
 .user {
+  align-self: flex-start;
+  background: #0b2a44;
   color: #00e5ff;
 }
 
+/* AI RIGHT */
 .ai {
+  align-self: flex-end;
+  background: #0b1c33;
   color: #ffffff;
 }
 
 .thinking {
-  opacity: 0.6;
-  font-style: italic;
+  opacity: 0.5;
 }
 
 /* ===== INPUT ===== */
