@@ -1,5 +1,10 @@
 export function addMessage(text, sender) {
   const chat = document.getElementById("chat");
+export function formatMessage(text) {
+  return text
+    .replace(/\n/g, "<br>")
+    .replace(/`(.*?)`/g, "<code>$1</code>");
+};
 
   const msg = document.createElement("div");
   msg.className = sender === "user" ? "msg user" : "msg ai";
@@ -14,3 +19,4 @@ export function addMessage(text, sender) {
 export function clearChat() {
   document.getElementById("chat").innerHTML = "";
 }
+
