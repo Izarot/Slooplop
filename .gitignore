@@ -1,0 +1,14 @@
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Future-proof (optional stuff later)
+node_modules/
+dist/
+build/
+
+# Env files (if APIs later)
+.env
