@@ -10,7 +10,23 @@ export function setupInput(memory, mood) {
   }
 
   function send() {
-    console.log("SEND TRIGGERED");
+  alert("SEND RUNNING"); // debug
+
+  const text = inputEl.value.trim();
+  if (!text) return;
+
+  // 👇 FORCE TEST UI
+  addMessage("USER: " + text, "user");
+
+  // 👇 TEMP STATIC RESPONSE (skip brain for now)
+  const response = "AI WORKING";
+
+  setTimeout(() => {
+    addMessage(response, "ai");
+  }, 200);
+
+  inputEl.value = "";
+}
 
     const text = inputEl.value.trim();
     if (!text) return;
