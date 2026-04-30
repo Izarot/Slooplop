@@ -1,6 +1,3 @@
-import { generateResponse } from "../brain/core.js";
-import { addMessage } from "./ui.js";
-
 export function setupInput(memory, mood) {
   const inputEl = document.getElementById("input");
   const sendBtn = document.getElementById("sendBtn");
@@ -39,14 +36,20 @@ export function setupInput(memory, mood) {
     inputEl.value = "";
   }
 
-  // CLICK (forced)
-  sendBtn.onclick = send;
+  // ✅ DESKTOP CLICK
+  sendBtn.addEventListener("click", send);
 
-  // ENTER
-  inputEl.onkeydown = function (e) {
+  // ✅ MOBILE TOUCH
+  sendBtn.addEventListener("touchstart", (e) => {
+    e.preventDefault(); // stops weird double trigger
+    send();
+  });
+
+  // ✅ ENTER KEY
+  inputEl.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
       send();
     }
-  };
+  });
 }
