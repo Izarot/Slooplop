@@ -7,10 +7,7 @@ export function formatMessage(text) {
 export function addMessage(text, sender) {
   const chat = document.getElementById("chat");
 
-  if (!chat) {
-    console.error("Chat element not found");
-    return;
-  }
+  if (!chat) return;
 
   const msg = document.createElement("div");
   msg.className = sender === "user" ? "msg user" : "msg ai";
@@ -19,9 +16,4 @@ export function addMessage(text, sender) {
 
   chat.appendChild(msg);
   chat.scrollTop = chat.scrollHeight;
-}
-
-export function clearChat() {
-  const chat = document.getElementById("chat");
-  if (chat) chat.innerHTML = "";
 }
