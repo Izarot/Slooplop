@@ -7,4 +7,4 @@ export class Mood {
     if (input.includes("!")) this.current = "aggressive";
     else this.current = "neutral";
   }
-}
+} 
