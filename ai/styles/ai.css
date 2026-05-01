@@ -82,3 +82,10 @@ button {
   min-width: 80px;
   min-height: 44px; /* mobile-friendly */
 }
+
+button {
+  touch-action: manipulation;
+  cursor: pointer;
+  position: relative;
+  z-index: 10;
+}
