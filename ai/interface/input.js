@@ -4,18 +4,17 @@ import { addMessage } from "./ui.js";
 export function setupInput(memory, mood, profile) {
   const inputEl = document.getElementById("input");
   const sendBtn = document.getElementById("sendBtn");
+  const chat = document.getElementById("chat");
 
-  if (!inputEl || !sendBtn) {
-    console.error("Input or button not found");
+  if (!inputEl || !sendBtn || !chat) {
+    console.error("Missing elements");
     return;
   }
 
-  // 🧠 CORE SEND FUNCTION
   function send() {
     const text = inputEl.value.trim();
     if (!text) return;
 
-    // user message
     addMessage(text, "user");
 
     let response;
@@ -23,42 +22,41 @@ export function setupInput(memory, mood, profile) {
       response = generateResponse(text, memory, mood, profile);
     } catch (e) {
       console.error(e);
-      response = "Error in brain";
+      response = "Brain error";
     }
 
-    // AI response
     setTimeout(() => {
       addMessage(response, "ai");
-
-      // render math if available
-      if (window.renderMathInElement) {
-        renderMathInElement(document.body);
-      }
     }, 120);
 
     inputEl.value = "";
   }
 
-  // 🔥 UNIVERSAL EVENT HANDLER (mobile + desktop)
-  const handler = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    send();
-  };
-
-  // Desktop click
-  sendBtn.addEventListener("click", handler);
-
-  // Mobile (main fix)
-  sendBtn.addEventListener("pointerup", handler);
-
-  // Android fallback
-  sendBtn.addEventListener("touchend", handler);
-
-  // Enter key
+  // ✅ 1. ENTER ALWAYS WORKS
   inputEl.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
+      send();
+    }
+  });
+
+  // ✅ 2. BUTTON CLICK (keep it simple)
+  sendBtn.onclick = send;
+
+  // 🔥 3. BACKUP: TAP ANYWHERE NEAR INPUT SENDS
+  document.addEventListener("touchend", (e) => {
+    const rect = sendBtn.getBoundingClientRect();
+
+    const x = e.changedTouches[0].clientX;
+    const y = e.changedTouches[0].clientY;
+
+    // if tap is near button (extra hitbox)
+    if (
+      x > rect.left - 20 &&
+      x < rect.right + 20 &&
+      y > rect.top - 20 &&
+      y < rect.bottom + 20
+    ) {
       send();
     }
   });
