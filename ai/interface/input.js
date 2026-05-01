@@ -2,62 +2,50 @@ import { generateResponse } from "../brain/core.js";
 import { addMessage } from "./ui.js";
 
 export function setupInput(memory, mood, profile) {
-  const inputEl = document.getElementById("input");
-  const sendBtn = document.getElementById("sendBtn");
-  const chat = document.getElementById("chat");
+  document.addEventListener("DOMContentLoaded", () => {
+    const inputEl = document.getElementById("input");
+    const sendBtn = document.getElementById("sendBtn");
 
-  if (!inputEl || !sendBtn || !chat) {
-    console.error("Missing elements");
-    return;
-  }
-
-  function send() {
-    const text = inputEl.value.trim();
-    if (!text) return;
-
-    addMessage(text, "user");
-
-    let response;
-    try {
-      response = generateResponse(text, memory, mood, profile);
-    } catch (e) {
-      console.error(e);
-      response = "Brain error";
+    if (!inputEl || !sendBtn) {
+      alert("UI not found");
+      return;
     }
 
-    setTimeout(() => {
-      addMessage(response, "ai");
-    }, 120);
+    function send() {
+      console.log("SEND CALLED"); // 🔍 debug
+      const text = inputEl.value.trim();
+      if (!text) return;
 
-    inputEl.value = "";
-  }
+      addMessage(text, "user");
 
-  // ✅ 1. ENTER ALWAYS WORKS
-  inputEl.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      send();
+      let response = "Error";
+      try {
+        response = generateResponse(text, memory, mood, profile);
+      } catch (e) {
+        console.error(e);
+      }
+
+      setTimeout(() => {
+        addMessage(response, "ai");
+      }, 120);
+
+      inputEl.value = "";
     }
-  });
 
-  // ✅ 2. BUTTON CLICK (keep it simple)
-  sendBtn.onclick = send;
+    // ✅ single reliable binding
+    sendBtn.onclick = send;
 
-  // 🔥 3. BACKUP: TAP ANYWHERE NEAR INPUT SENDS
-  document.addEventListener("touchend", (e) => {
-    const rect = sendBtn.getBoundingClientRect();
+    // ✅ Enter key
+    inputEl.onkeydown = (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        send();
+      }
+    };
 
-    const x = e.changedTouches[0].clientX;
-    const y = e.changedTouches[0].clientY;
-
-    // if tap is near button (extra hitbox)
-    if (
-      x > rect.left - 20 &&
-      x < rect.right + 20 &&
-      y > rect.top - 20 &&
-      y < rect.bottom + 20
-    ) {
-      send();
-    }
+    // 🔍 tap debug
+    sendBtn.addEventListener("touchstart", () => {
+      console.log("TOUCH START DETECTED");
+    });
   });
 }
