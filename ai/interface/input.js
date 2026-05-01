@@ -1,71 +1,30 @@
-export function setupInput(memory, mood) {
+import { generateResponse } from "../brain/core.js";
+import { addMessage } from "./ui.js";
+
+export function setupInput(memory, mood, profile) {
   const inputEl = document.getElementById("input");
   const sendBtn = document.getElementById("sendBtn");
 
-  console.log("SETUP INPUT RUNNING");
-
-  if (!inputEl || !sendBtn) {
-    console.error("Missing input or button");
-    return;
-  }
-
   function send() {
-  alert("SEND RUNNING"); // debug
-
-  const text = inputEl.value.trim();
-  if (!text) return;
-
-  // 👇 FORCE TEST UI
-  addMessage("USER: " + text, "user");
-
-  // 👇 TEMP STATIC RESPONSE (skip brain for now)
-  const response = "AI WORKING";
-
-  setTimeout(() => {
-    addMessage(response, "ai");
-  }, 200);
-
-  inputEl.value = "";
-}
-
     const text = inputEl.value.trim();
     if (!text) return;
 
     addMessage(text, "user");
 
-    let response;
-    try {
-      response = generateResponse(text, memory, mood);
-    } catch (err) {
-      console.error(err);
-      response = "Brain error";
-    }
+    const response = generateResponse(text, memory, mood, profile);
 
     setTimeout(() => {
       addMessage(response, "ai");
-
-      if (window.renderMathInElement) {
-        renderMathInElement(document.body);
-      }
-    }, 200);
+    }, 150);
 
     inputEl.value = "";
   }
 
-  // ✅ DESKTOP CLICK
+  // ✅ FIX: works on mobile + desktop
   sendBtn.addEventListener("click", send);
+  sendBtn.addEventListener("touchend", send);
 
-  // ✅ MOBILE TOUCH
-  sendBtn.addEventListener("touchstart", (e) => {
-    e.preventDefault(); // stops weird double trigger
-    send();
-  });
-
-  // ✅ ENTER KEY
   inputEl.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      send();
-    }
+    if (e.key === "Enter") send();
   });
 }
