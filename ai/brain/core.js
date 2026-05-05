@@ -8,53 +8,59 @@ import { getKnowledge } from "./intelligence/knowledge.js";
 export function generateResponse(input, memory, mood, profile) {
   const text = input.trim();
 
-  // 🧠 store input
   memory.add("user", text);
-
-  // 🎭 update systems
   mood.update(text);
   profile.update(text);
 
-  // 🧠 analyze structure
   const structure = analyze(text);
-
-  // 🧠 internal reasoning
   const thought = reason(structure, memory);
-
-  // 📚 knowledge lookup
   const knowledge = getKnowledge(thought.topic);
 
-  // 🧠 build base response
   let response = build(structure, memory);
 
-  // 📚 inject knowledge if relevant
   if (structure.isQuestion && knowledge) {
     response += " " + knowledge.explanation;
   }
 
-  // 🧬 learning
+  const recalled = memory.recall(text);
+  if (recalled) {
+    response = "Earlier you said: \"" + recalled + "\". " + response;
+  }
+
   memory.add("ai", response);
   memory.storePhrase(response);
 
-  return style(response, mood);
+  return style(response, mood, profile);
 }
 
-
-// 🎭 style system
-function style(text, mood) {
-  let res = text;
+function style(res, mood, profile) {
+  let result = res;
 
   if (mood.current === "friendly") {
-    res += " 🙂";
+    result += " 🙂";
   }
 
   if (mood.current === "aggressive") {
-    res = res.toUpperCase();
+    result = result.toUpperCase();
   }
 
   if (mood.current === "analytical") {
-    res = "→ " + res;
+    result = "→ " + result;
   }
 
-  return res;
+  const styleType = profile.evolveStyle ? profile.evolveStyle() : "neutral";
+
+  if (styleType === "soft") {
+    result += ".";
+  }
+
+  if (styleType === "sharp") {
+    result = result.replace(/\.$/, "!"); 
+  }
+
+  if (styleType === "logical") {
+    result = "Logically, " + result;
+  }
+
+  return result;
 }
