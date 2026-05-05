@@ -1,5 +1,9 @@
+// ai/brain/core.js
+
 import { analyze } from "./language/grammarEngine.js";
 import { build } from "./language/sentenceBuilder.js";
+import { reason } from "./intelligence/reasoner.js";
+import { getKnowledge } from "./intelligence/knowledge.js";
 
 export function generateResponse(input, memory, mood, profile) {
   const text = input.trim();
@@ -7,67 +11,50 @@ export function generateResponse(input, memory, mood, profile) {
   // 🧠 store input
   memory.add("user", text);
 
+  // 🎭 update systems
   mood.update(text);
   profile.update(text);
 
   // 🧠 analyze structure
   const structure = analyze(text);
 
-  // 🧠 try reuse learned response
-  const learned = memory.findSimilar(text);
+  // 🧠 internal reasoning
+  const thought = reason(structure, memory);
 
-  let response;
+  // 📚 knowledge lookup
+  const knowledge = getKnowledge(thought.topic);
 
-  if (learned && Math.random() > 0.4) {
-    // 🔁 reuse + mutate slightly
-    response = mutate(learned);
-  } else {
-    // 🧠 generate fresh
-    response = build(structure, memory);
+  // 🧠 build base response
+  let response = build(structure, memory);
+
+  // 📚 inject knowledge if relevant
+  if (structure.isQuestion && knowledge) {
+    response += " " + knowledge.explanation;
   }
 
-  // 🧠 store AI response
+  // 🧬 learning
   memory.add("ai", response);
   memory.storePhrase(response);
 
-  return style(response, mood, memory);
+  return style(response, mood);
 }
 
 
-// 🧬 mutation system (gives variation)
-function mutate(text) {
-  const variations = [
-    text,
-    text + ".",
-    text.replace("I", "I think"),
-    text.replace("understand", "get"),
-  ];
-
-  return variations[Math.floor(Math.random() * variations.length)];
-}
-
-
-// 🎭 tone styling
-function style(res, mood, memory) {
-  let result = res;
+// 🎭 style system
+function style(text, mood) {
+  let res = text;
 
   if (mood.current === "friendly") {
-    result += " 🙂";
+    res += " 🙂";
   }
 
   if (mood.current === "aggressive") {
-    result = result.toUpperCase();
+    res = res.toUpperCase();
   }
 
   if (mood.current === "analytical") {
-    result = "→ " + result;
+    res = "→ " + res;
   }
 
-  // 🧠 inject topic awareness
-  const topic = memory.getTopWord();
-  if (topic && Math.random() > 0.7) {
-    result += ` (You seem to talk about "${topic}")`;
-  }
-
-  return result;
+  return res;
 }
