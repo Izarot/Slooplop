@@ -1,42 +1,73 @@
-// ai/brain/core.js
-
-import { parse } from "./intelligence/parser.js";
-import { interpret } from "./intelligence/meaning.js";
-import { buildSentence } from "./intelligence/grammar.js";
+import { analyze } from "./language/grammarEngine.js";
+import { build } from "./language/sentenceBuilder.js";
 
 export function generateResponse(input, memory, mood, profile) {
-  // 🧠 store memory
-  memory.add("user", input);
+  const text = input.trim();
 
-  // 🎭 update systems
-  mood.update(input);
-  profile.update(input);
+  // 🧠 store input
+  memory.add("user", text);
 
-  // 🧩 THINKING PIPELINE
-  const words = parse(input);
-  const thought = interpret(words);
+  mood.update(text);
+  profile.update(text);
 
-  // 🧠 build response
-  let response = buildSentence(thought, input, profile);
+  // 🧠 analyze structure
+  const structure = analyze(text);
 
-  // 🎭 apply mood styling
-  response = style(response, mood);
+  // 🧠 try reuse learned response
+  const learned = memory.findSimilar(text);
 
-  // 🧬 learning (simple reinforcement)
-  if (profile.learn) {
-    profile.learn(input, response);
+  let response;
+
+  if (learned && Math.random() > 0.4) {
+    // 🔁 reuse + mutate slightly
+    response = mutate(learned);
+  } else {
+    // 🧠 generate fresh
+    response = build(structure, memory);
   }
 
-  return response;
+  // 🧠 store AI response
+  memory.add("ai", response);
+  memory.storePhrase(response);
+
+  return style(response, mood, memory);
 }
 
 
-// 🎭 STYLE ENGINE (light, not annoying)
-function style(text, mood) {
-  if (mood.current === "friendly") return text + " 🙂";
-  if (mood.current === "aggressive") return text.toUpperCase();
-  if (mood.current === "focused") return "[FOCUS] " + text;
-  if (mood.current === "analytical") return "→ " + text;
+// 🧬 mutation system (gives variation)
+function mutate(text) {
+  const variations = [
+    text,
+    text + ".",
+    text.replace("I", "I think"),
+    text.replace("understand", "get"),
+  ];
 
-  return text;
+  return variations[Math.floor(Math.random() * variations.length)];
+}
+
+
+// 🎭 tone styling
+function style(res, mood, memory) {
+  let result = res;
+
+  if (mood.current === "friendly") {
+    result += " 🙂";
+  }
+
+  if (mood.current === "aggressive") {
+    result = result.toUpperCase();
+  }
+
+  if (mood.current === "analytical") {
+    result = "→ " + result;
+  }
+
+  // 🧠 inject topic awareness
+  const topic = memory.getTopWord();
+  if (topic && Math.random() > 0.7) {
+    result += ` (You seem to talk about "${topic}")`;
+  }
+
+  return result;
 }
