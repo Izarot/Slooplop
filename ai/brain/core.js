@@ -1,58 +1,42 @@
-import { buildResponse } from "./response.js";
+// ai/brain/core.js
 
-let lastResponse = "";
+import { parse } from "./intelligence/parser.js";
+import { interpret } from "./intelligence/meaning.js";
+import { buildSentence } from "./intelligence/grammar.js";
 
 export function generateResponse(input, memory, mood, profile) {
-  const text = input.toLowerCase();
-
+  // 🧠 store memory
   memory.add("user", input);
+
+  // 🎭 update systems
   mood.update(input);
   profile.update(input);
 
-  const context = memory.getRecent();
+  // 🧩 THINKING PIPELINE
+  const words = parse(input);
+  const thought = interpret(words);
 
-  // adaptive tone
-  mood.current = profile.dominantTone() || mood.current;
+  // 🧠 build response
+  let response = buildSentence(thought, input, profile);
 
-  const chain = buildResponse(text, context, profile);
-  let output = formatChain(chain);
+  // 🎭 apply mood styling
+  response = style(response, mood);
 
-  output = style(output, mood);
-
-  // FIX LOOP SPAM
-  if (output === lastResponse) {
-    output = "Say something different.";
+  // 🧬 learning (simple reinforcement)
+  if (profile.learn) {
+    profile.learn(input, response);
   }
 
-  lastResponse = output;
-  return output;
+  return response;
 }
 
 
-// 🧠 LOGIC → HUMAN TEXT
-function formatChain(chain) {
-  const map = {
-    "Greet": "Hello.",
-    "Clarify": "What do you mean?",
-    "Handle emotion": "Calm down. Speak clearly.",
-    "Build": "We can build it. What exactly?",
-    "Explain why": "Here’s why:",
-    "Explain how": "Here’s how:",
-    "Neutral": "I get what you're saying."
-  };
+// 🎭 STYLE ENGINE (light, not annoying)
+function style(text, mood) {
+  if (mood.current === "friendly") return text + " 🙂";
+  if (mood.current === "aggressive") return text.toUpperCase();
+  if (mood.current === "focused") return "[FOCUS] " + text;
+  if (mood.current === "analytical") return "→ " + text;
 
-  return chain.map(step => map[step] || step).join(" ");
-}
-
-
-// 🎭 STYLE SYSTEM
-function style(base, mood) {
-  let res = base;
-
-  if (mood.current === "friendly") res += " 🙂";
-  if (mood.current === "aggressive") res = res.toUpperCase();
-  if (mood.current === "focused") res = "[FOCUS] " + res;
-  if (mood.current === "analytical") res = "→ " + res;
-
-  return res;
+  return text;
 }
