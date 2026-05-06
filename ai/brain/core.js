@@ -1,28 +1,20 @@
 // /ai/brain/core.js
 
-import { parse }
-from "./language/parser.js";
+import { parse } from "./language/parser.js";
 
-import { mapConcepts }
-from "./intelligence/conceptMapper.js";
+import { mapConcepts } from "./intelligence/conceptMapper.js";
 
-import { reason }
-from "./intelligence/reasoner.js";
+import { reason } from "./intelligence/reasoner.js";
 
-import { think }
-from "./intelligence/thoughtEngine.js";
+import { think } from "./intelligence/thoughtEngine.js";
 
-import { evaluateWorldState }
-from "./world/worldModel.js";
+import { evaluateWorldState } from "./world/worldModel.js";
 
-import { buildSentence }
-from "./language/sentenceBuilder.js";
+import { buildSentence } from "./language/sentenceBuilder.js";
 
-import { updateGlobalMemory }
-from "./learning/globalMemory.js";
+import { updateGlobalMemory } from "./learning/globalMemory.js";
 
-import { detectPatterns }
-from "./learning/patternLearner.js";
+import { detectPatterns } from "./learning/patternLearner.js";
 
 
 export async function generateResponse(
