@@ -1,16 +1,12 @@
 // /ai/app.js
 
-import { Memory }
-from "./brain/memory.js";
+import { Memory } from "./brain/memory.js";
 
-import { Mood }
-from "./brain/mood.js";
+import { Mood } from "./brain/mood.js";
 
-import { Profile }
-from "./brain/profile.js";
+import { Profile } from "./brain/profile.js";
 
-import { setupInput }
-from "./interface/input.js";
+import { setupInput } from "./interface/input.js";
 
 
 // CORE STATE
