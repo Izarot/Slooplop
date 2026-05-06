@@ -3,11 +3,16 @@
     "causes": [
       "liquid decreases",
       "thirst decreases"
+    ],
+    "relatedConcepts": [
+      "water",
+      "glass",
+      "human"
     ]
   },
 
   "green sky": {
-    "possible_causes": [
+    "possibleCauses": [
       "storm",
       "lighting conditions",
       "atmospheric particles"
@@ -15,7 +20,7 @@
   },
 
   "water disappearing": {
-    "possible_causes": [
+    "possibleCauses": [
       "drinking",
       "evaporation",
       "leaking"
@@ -23,10 +28,26 @@
   },
 
   "love law hate math": {
-    "possible_suggestions": [
+    "possibleSuggestions": [
       "lawyer",
+      "journalism",
       "politics",
-      "journalism"
+      "debate"
+    ]
+  },
+
+  "drinking water": {
+    "effects": [
+      "hydration",
+      "reduced thirst"
+    ]
+  },
+
+  "storm": {
+    "effects": [
+      "dark clouds",
+      "green sky",
+      "heavy rain"
     ]
   }
 }
