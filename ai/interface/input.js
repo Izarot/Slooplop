@@ -1,13 +1,10 @@
 // /ai/interface/input.js
 
-import { generateResponse }
-from "../brain/core.js";
+import { generateResponse } from "../brain/core.js";
 
-import { addMessage }
-from "./ui.js";
+import { addMessage } from "./ui.js";
 
-import { renderLatex }
-from "../brain/intelligence/latex.js";
+import { renderLatex } from "../brain/intelligence/latex.js";
 
 
 export function setupInput(
