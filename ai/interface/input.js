@@ -25,9 +25,6 @@ export function setupInput(
   
   async function send() {
 
-    const text =
-      inputEl.value.trim();
-
     if (!text) {
       return;
     }
