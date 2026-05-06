@@ -1,55 +1,112 @@
-// ai/interface/input.js
+// /ai/interface/input.js
 
-import { generateResponse } from "../brain/core.js";
-import { addMessage } from "./ui.js";
-import { renderLatex } from "../brain/intelligence/latex.js";
+import { generateResponse }
+from "../brain/core.js";
 
-export function setupInput(memory, mood, profile) {
-  const inputEl = document.getElementById("input");
-  const sendBtn = document.getElementById("sendBtn");
+import { addMessage }
+from "./ui.js";
 
-  if (!inputEl || !sendBtn) {
-    alert("UI not found");
+import { renderLatex }
+from "../brain/intelligence/latex.js";
+
+
+export function setupInput(
+  memory,
+  mood,
+  profile
+) {
+
+  const inputEl =
+    document.getElementById(
+      "input"
+    );
+
+  const sendBtn =
+    document.getElementById(
+      "sendBtn"
+    );
+
+  if (
+    !inputEl ||
+    !sendBtn
+  ) {
+
+    console.error(
+      "UI elements missing"
+    );
+
     return;
   }
 
-  // 🧠 SEND FUNCTION
-  function send() {
-    const text = inputEl.value.trim();
-    if (!text) return;
+  async function send() {
 
-    // show user message
-    addMessage(text, "user");
+    const text =
+      inputEl.value.trim();
 
-    let response = "Error";
-
-    try {
-      response = generateResponse(text, memory, mood, profile);
-    } catch (e) {
-      console.error("AI error:", e);
-      response = "Something broke.";
+    if (!text) {
+      return;
     }
 
-    // show AI response
-    setTimeout(() => {
-      addMessage(response, "ai");
+    // USER MESSAGE
 
-      // 🔥 render LaTeX after message
-      renderLatex();
-
-    }, 120);
+    addMessage(
+      text,
+      "user"
+    );
 
     inputEl.value = "";
+
+    let response =
+      "Processing...";
+
+    try {
+
+      response =
+        await generateResponse(
+          text,
+          memory,
+          mood,
+          profile
+        );
+
+    } catch (error) {
+
+      console.error(error);
+
+      response =
+        "System reasoning failure.";
+    }
+
+    // AI MESSAGE
+
+    addMessage(
+      response,
+      "ai"
+    );
+
+    // LATEX
+
+    renderLatex();
   }
 
-  // ✅ BUTTON CLICK
+  // BUTTON
+
   sendBtn.onclick = send;
 
-  // ✅ ENTER KEY
-  inputEl.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      send();
+  // ENTER
+
+  inputEl.addEventListener(
+    "keydown",
+    e => {
+
+      if (
+        e.key === "Enter"
+      ) {
+
+        e.preventDefault();
+
+        send();
+      }
     }
-  });
+  );
 }
