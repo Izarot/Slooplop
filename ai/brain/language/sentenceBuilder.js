@@ -1,73 +1,105 @@
-import { fixGrammar } from "./grammarEngine.js";
+// /ai/brain/language/sentenceBuilder.js
 
-function random(arr) {
-  return arr[Math.floor(Math.random() * arr.length)];
+import { applyGrammar }
+from "./grammarEngine.js";
+
+export function buildSentence(
+  structure,
+  mappedConcepts,
+  reasoning,
+  thought
+) {
+
+  let response = "";
+
+  // OPENING
+
+  response += buildOpening(
+    structure,
+    thought
+  );
+
+  // MAIN ANSWER
+
+  if (reasoning.answer) {
+
+    response += " " +
+      reasoning.answer;
+  }
+
+  // EXPLANATION LAYER
+
+  if (
+    thought.responsePlan
+      .includeExplanation
+  ) {
+
+    response += buildExplanation(
+      reasoning
+    );
+  }
+
+  // FINAL GRAMMAR
+
+  response =
+    applyGrammar(response);
+
+  return response;
 }
 
-const OPENERS = [
-  "I understand.",
-  "Let me think.",
-  "Here is what I see.",
-  "Okay."
-];
 
-const THINKING_LINES = [
-  "I analyze your input",
-  "I look at the structure",
-  "I try to understand the meaning"
-];
+function buildOpening(
+  structure,
+  thought
+) {
 
-const RESPONSES = [
-  "This seems incomplete.",
-  "You may want to clarify this.",
-  "There is a pattern here.",
-  "I can explain this better if you give more detail."
-];
+  // question mode
 
-const ANSWERS = {
-  sky: "The sky appears red due to light scattering in the atmosphere.",
-  math: "Mathematics works by applying rules to numbers and structures."
-};
+  if (structure.type === "question") {
 
-export function build(structure, memory) {
-  const words = structure.rawWords;
+    if (
+      thought.responsePlan.tone
+      === "logical"
+    ) {
 
-  // ✨ fix user sentence first
-  const cleaned = fixGrammar([...words]);
-
-  let sentence = "";
-
-  // 🧠 opener
-  sentence += random(OPENERS) + " ";
-
-  // 🧠 reasoning (not visible as steps, but natural)
-  if (Math.random() > 0.4) {
-    sentence += random(THINKING_LINES) + ". ";
-  }
-
-  // 🧠 detect known topics
-  let answer = null;
-
-  for (let key in ANSWERS) {
-    if (words.includes(key)) {
-      answer = ANSWERS[key];
-      break;
+      return "Logically speaking,";
     }
+
+    return "From my analysis,";
   }
 
-  // 🧠 generate output
-  if (structure.isQuestion && answer) {
-    sentence += answer;
-  } 
-  else if (structure.isQuestion) {
-    sentence += "That is a good question. " + random(RESPONSES);
-  } 
-  else if (words.length <= 2) {
-    sentence += "That is very short. Can you explain more?";
-  } 
-  else {
-    sentence += cleaned + ".";
+  // statements
+
+  if (
+    structure.emotion
+    === "anger"
+  ) {
+
+    return "I understand your frustration.";
   }
 
-  return sentence;
+  return "I understand.";
+}
+
+
+function buildExplanation(
+  reasoning
+) {
+
+  if (
+    !reasoning.conclusions ||
+    reasoning.conclusions.length === 0
+  ) {
+    return "";
+  }
+
+  let explanation =
+    " Reasoning: ";
+
+  explanation +=
+    reasoning.conclusions.join(
+      ", "
+    );
+
+  return explanation;
 }
