@@ -1,75 +1,192 @@
-// ai/brain/memory.js
+// /ai/brain/memory.js
 
 export class Memory {
+
   constructor() {
+
+    // short-term memory
+
     this.messages = [];
-    this.phrases = [];
+
+    // compressed long-term memory
+
+    this.longTerm = [];
+
+    // concept memory
+
+    this.concepts = {};
+
+    // conversational state
+
+    this.currentTopic = null;
+
+    this.lastUserMessage = null;
+
+    this.lastAIMessage = null;
   }
 
-  // 🧠 store messages
+
+  // STORE MESSAGE
+
   add(role, text) {
-    this.messages.push({ role, text });
+
+    const message = {
+      role,
+      text,
+      timestamp: Date.now()
+    };
+
+    this.messages.push(message);
+
+    // limit short-term memory
 
     if (this.messages.length > 40) {
+
       this.messages.shift();
     }
-  }
 
-  // 🔍 recent context
-  getRecent(n = 5) {
-    return this.messages.slice(-n).map(m => m.text).join(" ");
-  }
+    // update state
 
-  // 🧠 store AI responses
-  storePhrase(response) {
-    if (!this.phrases.includes(response)) {
-      this.phrases.push(response);
+    if (role === "user") {
+
+      this.lastUserMessage =
+        text;
     }
 
-    if (this.phrases.length > 60) {
-      this.phrases.shift();
+    if (role === "ai") {
+
+      this.lastAIMessage =
+        text;
     }
+
+    // concept extraction
+
+    this.learnConcepts(text);
   }
 
-  // 🔎 find similar phrase
-  findSimilar(input) {
-    const words = input.toLowerCase().split(/\s+/);
+
+  // CONCEPT LEARNING
+
+  learnConcepts(text) {
+
+    const words =
+      text
+        .toLowerCase()
+        .split(/\s+/);
+
+    words.forEach(word => {
+
+      if (word.length < 4) {
+        return;
+      }
+
+      if (!this.concepts[word]) {
+
+        this.concepts[word] = 0;
+      }
+
+      this.concepts[word]++;
+    });
+
+    this.currentTopic =
+      this.findDominantConcept();
+  }
+
+
+  // DOMINANT TOPIC
+
+  findDominantConcept() {
 
     let best = null;
-    let score = 0;
 
-    this.phrases.forEach(p => {
-      let s = 0;
+    let max = 0;
 
-      words.forEach(w => {
-        if (p.includes(w)) s++;
-      });
+    for (const word in this.concepts) {
 
-      if (s > score) {
-        score = s;
-        best = p;
+      if (
+        this.concepts[word] > max
+      ) {
+
+        max =
+          this.concepts[word];
+
+        best = word;
       }
-    });
+    }
 
     return best;
   }
 
-  // 🧠 memory recall (NEW 🔥)
-  recall(input) {
-    const words = input.toLowerCase().split(/\s+/);
 
-    for (let i = this.messages.length - 1; i >= 0; i--) {
-      const msg = this.messages[i];
+  // RECENT MEMORY
 
-      if (msg.role === "user") {
-        for (let w of words) {
-          if (msg.text.toLowerCase().includes(w)) {
-            return msg.text;
-          }
-        }
-      }
+  getRecent(count = 6) {
+
+    return this.messages
+      .slice(-count)
+      .map(m => m.text)
+      .join(" ");
+  }
+
+
+  // MEMORY SEARCH
+
+  search(keyword) {
+
+    return this.messages.filter(
+      msg =>
+        msg.text
+          .toLowerCase()
+          .includes(
+            keyword.toLowerCase()
+          )
+    );
+  }
+
+
+  // LONG TERM MEMORY
+
+  compressMemory() {
+
+    const summary = {
+
+      topic:
+        this.currentTopic,
+
+      timestamp:
+        Date.now(),
+
+      totalMessages:
+        this.messages.length
+    };
+
+    this.longTerm.push(summary);
+
+    // prevent huge memory
+
+    if (
+      this.longTerm.length > 50
+    ) {
+
+      this.longTerm.shift();
     }
+  }
 
-    return null;
+
+  // STATE EXPORT
+
+  exportState() {
+
+    return {
+
+      topic:
+        this.currentTopic,
+
+      concepts:
+        this.concepts,
+
+      totalMessages:
+        this.messages.length
+    };
   }
 }
