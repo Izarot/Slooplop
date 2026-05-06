@@ -22,15 +22,7 @@ export function setupInput(
     document.getElementById(
       "sendBtn"
     );
-
-  if (
-    !inputEl ||
-    !sendBtn
-  ) {
-
-    return;
-  }
-
+  
   async function send() {
 
     const text =
