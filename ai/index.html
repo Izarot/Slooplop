@@ -2,103 +2,40 @@
 <html lang="en">
 
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <meta charset="UTF-8">
+  <title>SloopLop</title>
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+  <link rel="icon" type="image/png" href="./assets/images/slooplop-logo.png">
 
-  <title>SL V0.4</title>
-
-  <link
-    rel="stylesheet"
-    href="./styles/ai.css"
-  >
-
-  <!-- Inter Font -->
-
-  <link
-    rel="preconnect"
-    href="https://fonts.googleapis.com"
-  >
-
-  <link
-    rel="preconnect"
-    href="https://fonts.gstatic.com"
-    crossorigin
-  >
-
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-    rel="stylesheet"
-  >
-
-  <!-- KaTeX -->
-
-  <link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
-  >
-
-  <script
-    defer
-    src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"
-  ></script>
-
-  <script
-    defer
-    src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
-  ></script>
-
+  <link rel="stylesheet" href="./assets/style.css">
 </head>
 
 <body>
 
   <div class="app">
 
-    <!-- Header -->
-
-    <div class="topBar">
-
-      <div>
-
-        <div class="title">
-          SL
-        </div>
-
-        <div class="subtitle">
-          Cognitive Prototype V0.4
-        </div>
-
-      </div>
-
-      <div class="statusDot"></div>
-
+    <div class="logo-container">
+      <img
+        src="./assets/images/slooplop-logo.png"
+        alt="SloopLop Logo"
+        class="main-logo">
     </div>
 
-    <!-- Chat -->
+    <h1 class="title">Cognitive Prototype V0.4</h1>
 
-    <div
-      id="chat"
-      class="chat"
-    ></div>
+    <div id="chat-container"></div>
 
-    <!-- Input -->
-
-    <div class="inputRow">
+    <div class="input-area">
 
       <input
-        id="input"
-        autocomplete="off"
+        type="text"
+        id="user-input"
         placeholder="Talk to SL..."
-      >
+        autocomplete="off">
 
-      <button
-        id="sendBtn"
-        type="button"
-      >
+      <button id="send-btn">
         Send
       </button>
 
@@ -106,10 +43,7 @@
 
   </div>
 
-  <script
-    type="module"
-    src="./app.js"
-  ></script>
+  <script type="module" src="./ai/input.js"></script>
 
 </body>
 
