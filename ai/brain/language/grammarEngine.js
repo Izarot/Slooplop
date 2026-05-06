@@ -70,3 +70,5 @@ export function fixGrammar(words) {
     })
     .join(" ");
 }
+
+export const applyGrammar = fixGrammar;
