@@ -22,14 +22,9 @@ export function setupInput(
     document.getElementById(
       "sendBtn"
     );
+
   
-  async function send() {
-
-    if (!text) {
-      return;
-    }
-
-    // USER MESSAGE
+   // USER MESSAGE
 
     addMessage(
       text,
