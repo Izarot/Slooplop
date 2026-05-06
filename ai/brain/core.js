@@ -1,110 +1,25 @@
-// /ai/brain/core.js
-
-import { parse } from "./language/parser.js";
-
-import { mapConcepts } from "./intelligence/conceptMapper.js";
-
-import { reason } from "./intelligence/reasoner.js";
-
 import { think } from "./intelligence/thoughtEngine.js";
 
-import { evaluateWorldState } from "./world/worldModel.js";
+export async function processInput(input) {
 
-import { buildSentence } from "./language/sentenceBuilder.js";
+    try {
 
-import { updateGlobalMemory } from "./learning/globalMemory.js";
+        const result = await think(input);
 
-import { detectPatterns } from "./learning/patternLearner.js";
+        if (!result || result.length === 0) {
+            return "I could not think of a response.";
+        }
 
+        return result;
 
-export async function generateResponse(
-  input,
-  memory,
-  mood,
-  profile
-) {
+    } catch (error) {
 
-  // MEMORY
+        console.error("FULL BRAIN ERROR:", error);
 
-  memory.add(
-    "user",
-    input
-  );
+        return `
+System reasoning failure:
 
-  mood.update(input);
-
-  profile.update(input);
-
-  // PARSING
-
-  const structure =
-    parse(input);
-
-  // CONCEPTS
-
-  const mappedConcepts =
-    mapConcepts(structure);
-
-  // WORLD MODEL
-
-  const worldState =
-    evaluateWorldState(
-      structure,
-      mappedConcepts
-    );
-
-  // REASONING
-
-  const reasoning =
-    reason(
-      structure,
-      mappedConcepts,
-      worldState
-    );
-
-  // THOUGHT ENGINE
-
-  const thought =
-    think(
-      structure,
-      mappedConcepts,
-      reasoning
-    );
-
-  // LEARNING
-
-  const patterns =
-    detectPatterns(
-      memory,
-      structure
-    );
-
-  // RESPONSE
-
-  const response =
-    buildSentence(
-      structure,
-      mappedConcepts,
-      reasoning,
-      thought,
-      patterns,
-      worldState
-    );
-
-  // STORE AI RESPONSE
-
-  memory.add(
-    "ai",
-    response
-  );
-
-  // GLOBAL LEARNING
-
-  updateGlobalMemory(
-    structure,
-    reasoning,
-    response
-  );
-
-  return response;
+${error.message}
+        `;
+    }
 }
