@@ -1,7 +1,6 @@
 // /ai/brain/language/sentenceBuilder.js
 
-import { applyGrammar }
-from "./grammarEngine.js";
+import { applyGrammar } from "./grammarEngine.js";
 
 export function buildSentence(
   structure,
