@@ -1,89 +1,206 @@
-// ai/brain/profile.js
+// /ai/brain/profile.js
 
 export class Profile {
+
   constructor() {
-    this.tone = {
-      friendly: 0,
+
+    this.userStyle = {
+
+      analytical: 0,
+
+      emotional: 0,
+
       aggressive: 0,
-      analytical: 0
+
+      playful: 0
     };
 
-    this.preferences = {};
+    this.preferences = {
+
+      topics: {},
+
+      responseLength:
+        "medium",
+
+      prefersLogic: true
+    };
+
     this.history = [];
   }
 
-  // 🧠 update based on input
+
+  // UPDATE PROFILE
+
   update(input) {
-    const text = input.toLowerCase();
 
-    if (/(hello|hi|thanks)/.test(text)) {
-      this.tone.friendly++;
-    }
+    const text =
+      input.toLowerCase();
 
-    if (/(fuck|shit|idiot)/.test(text)) {
-      this.tone.aggressive++;
-    }
-
-    if (/(why|how|explain)/.test(text)) {
-      this.tone.analytical++;
-    }
-
-    // store interaction
     this.history.push(text);
 
-    if (this.history.length > 50) {
+    if (
+      this.history.length > 100
+    ) {
+
       this.history.shift();
     }
 
-    // detect interests
-    const words = text.split(/\s+/);
+    // detect style
 
-    words.forEach(w => {
-      if (!this.preferences[w]) {
-        this.preferences[w] = 0;
+    this.detectStyle(text);
+
+    // detect topics
+
+    this.detectTopics(text);
+
+    // detect response preference
+
+    this.detectPreference(text);
+  }
+
+
+  // STYLE DETECTION
+
+  detectStyle(text) {
+
+    if (
+      text.includes("why") ||
+      text.includes("how")
+    ) {
+
+      this.userStyle
+        .analytical++;
+    }
+
+    if (
+      text.includes("lol") ||
+      text.includes("lmao")
+    ) {
+
+      this.userStyle
+        .playful++;
+    }
+
+    if (
+      text.includes("fuck") ||
+      text.includes("shit")
+    ) {
+
+      this.userStyle
+        .aggressive++;
+    }
+  }
+
+
+  // TOPIC DETECTION
+
+  detectTopics(text) {
+
+    const words =
+      text.split(/\s+/);
+
+    words.forEach(word => {
+
+      if (word.length < 4) {
+        return;
       }
-      this.preferences[w]++;
+
+      if (
+        !this.preferences
+          .topics[word]
+      ) {
+
+        this.preferences
+          .topics[word] = 0;
+      }
+
+      this.preferences
+        .topics[word]++;
     });
   }
 
-  // 🎯 dominant tone
-  dominantTone() {
-    return Object.keys(this.tone).reduce((a, b) =>
-      this.tone[a] > this.tone[b] ? a : b
-    );
+
+  // RESPONSE PREFERENCE
+
+  detectPreference(text) {
+
+    if (
+      text.length > 120
+    ) {
+
+      this.preferences
+        .responseLength =
+          "long";
+    }
+
+    if (
+      text.length < 20
+    ) {
+
+      this.preferences
+        .responseLength =
+          "short";
+    }
   }
 
-  // 🧠 top interest
-  topInterest() {
-    let max = 0;
-    let key = null;
 
-    for (let k in this.preferences) {
-      if (this.preferences[k] > max) {
-        max = this.preferences[k];
-        key = k;
+  // DOMINANT STYLE
+
+  dominantStyle() {
+
+    let best =
+      "neutral";
+
+    let max = 0;
+
+    for (
+      const style
+      in this.userStyle
+    ) {
+
+      if (
+        this.userStyle[style]
+        > max
+      ) {
+
+        max =
+          this.userStyle[style];
+
+        best = style;
       }
     }
 
-    return key;
+    return best;
   }
 
-  // 🧬 personality shift
-  evolveStyle() {
-    const dominant = this.dominantTone();
 
-    if (dominant === "friendly") {
-      return "soft";
+  // TOP TOPIC
+
+  topTopic() {
+
+    let best = null;
+
+    let max = 0;
+
+    for (
+      const topic
+      in this.preferences.topics
+    ) {
+
+      if (
+        this.preferences
+          .topics[topic]
+        > max
+      ) {
+
+        max =
+          this.preferences
+            .topics[topic];
+
+        best = topic;
+      }
     }
 
-    if (dominant === "aggressive") {
-      return "sharp";
-    }
-
-    if (dominant === "analytical") {
-      return "logical";
-    }
-
-    return "neutral";
+    return best;
   }
 }
