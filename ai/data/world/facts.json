@@ -1,0 +1,12 @@
+{
+  "water": [
+    "Water is usually transparent.",
+    "Water reflects surrounding colors.",
+    "Water evaporates with heat."
+  ],
+
+  "sky": [
+    "The sky appears blue because of Rayleigh scattering.",
+    "The sky can appear green during severe storms."
+  ]
+}
