@@ -1,0 +1,32 @@
+{
+  "drink": {
+    "causes": [
+      "liquid decreases",
+      "thirst decreases"
+    ]
+  },
+
+  "green sky": {
+    "possible_causes": [
+      "storm",
+      "lighting conditions",
+      "atmospheric particles"
+    ]
+  },
+
+  "water disappearing": {
+    "possible_causes": [
+      "drinking",
+      "evaporation",
+      "leaking"
+    ]
+  },
+
+  "love law hate math": {
+    "possible_suggestions": [
+      "lawyer",
+      "politics",
+      "journalism"
+    ]
+  }
+}
