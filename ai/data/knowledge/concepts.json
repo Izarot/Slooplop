@@ -1,0 +1,58 @@
+{
+  "water": {
+    "type": "liquid",
+    "properties": [
+      "transparent",
+      "drinkable",
+      "flowing"
+    ],
+    "actions": [
+      "drink",
+      "pour",
+      "freeze",
+      "evaporate"
+    ]
+  },
+
+  "sky": {
+    "type": "environment",
+    "properties": [
+      "blue",
+      "visible",
+      "atmospheric"
+    ],
+    "actions": [
+      "darken",
+      "brighten",
+      "change_color"
+    ]
+  },
+
+  "math": {
+    "type": "subject",
+    "properties": [
+      "logical",
+      "numerical",
+      "analytical"
+    ],
+    "actions": [
+      "calculate",
+      "solve",
+      "prove"
+    ]
+  },
+
+  "law": {
+    "type": "subject",
+    "properties": [
+      "argumentative",
+      "verbal",
+      "social"
+    ],
+    "actions": [
+      "debate",
+      "analyze",
+      "defend"
+    ]
+  }
+}
