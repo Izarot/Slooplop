@@ -1,37 +1,142 @@
+// /ai/brain/mood.js
+
 export class Mood {
+
   constructor() {
-    this.current = "neutral";
+
+    this.state = "neutral";
+
     this.intensity = 0;
+
+    this.history = [];
   }
+
 
   update(input) {
-    const text = input.toLowerCase();
 
-    if (/(fuck|shit|idiot)/.test(text)) {
-      this.current = "aggressive";
-      this.intensity++;
-      return;
+    const text =
+      input.toLowerCase();
+
+    let detected =
+      "neutral";
+
+    // emotional detection
+
+    if (
+      containsAny(
+        text,
+        [
+          "angry",
+          "hate",
+          "fuck",
+          "shit",
+          "idiot"
+        ]
+      )
+    ) {
+
+      detected =
+        "aggressive";
     }
 
-    if (/(hello|hi|thanks)/.test(text)) {
-      this.current = "friendly";
-      this.intensity++;
-      return;
+    else if (
+      containsAny(
+        text,
+        [
+          "sad",
+          "depressed",
+          "lonely",
+          "cry"
+        ]
+      )
+    ) {
+
+      detected =
+        "sad";
     }
 
-    if (/(code|build|fix)/.test(text)) {
-      this.current = "focused";
-      this.intensity++;
-      return;
+    else if (
+      containsAny(
+        text,
+        [
+          "why",
+          "how",
+          "explain",
+          "analyze"
+        ]
+      )
+    ) {
+
+      detected =
+        "analytical";
     }
 
-    if (/(why|how|explain)/.test(text)) {
-      this.current = "analytical";
-      this.intensity++;
-      return;
+    else if (
+      containsAny(
+        text,
+        [
+          "lol",
+          "lmao",
+          "funny",
+          "xd"
+        ]
+      )
+    ) {
+
+      detected =
+        "playful";
     }
 
-    this.intensity = Math.max(0, this.intensity - 1);
-    if (this.intensity === 0) this.current = "neutral";
+    this.state =
+      detected;
+
+    this.intensity++;
+
+    this.history.push({
+      mood: detected,
+      timestamp:
+        Date.now()
+    });
+
+    if (
+      this.history.length > 40
+    ) {
+
+      this.history.shift();
+    }
   }
+
+
+  current() {
+
+    return {
+
+      state:
+        this.state,
+
+      intensity:
+        this.intensity
+    };
+  }
+
+
+  reset() {
+
+    this.state =
+      "neutral";
+
+    this.intensity = 0;
+  }
+}
+
+
+function containsAny(
+  text,
+  words
+) {
+
+  return words.some(
+    word =>
+      text.includes(word)
+  );
 }
