@@ -1,18 +1,59 @@
 const COMMON_VERBS = [
-  "is", "are", "was", "were", "do", "does",
-  "make", "build", "explain", "learn", "think",
-  "want", "need", "know"
+  "is",
+  "are",
+  "was",
+  "were",
+  "do",
+  "does",
+  "make",
+  "build",
+  "explain",
+  "learn",
+  "think",
+  "want",
+  "need",
+  "know",
+  "feel",
+  "see",
+  "understand",
+  "create",
+  "become"
 ];
 
-const QUESTION_WORDS = ["why", "how", "what", "when", "where"];
-const PRONOUNS = ["i", "you", "it", "we", "they"];
-const ARTICLES = ["a", "an", "the"];
+const QUESTION_WORDS = [
+  "why",
+  "how",
+  "what",
+  "when",
+  "where",
+  "who"
+];
+
+const PRONOUNS = [
+  "i",
+  "you",
+  "it",
+  "we",
+  "they",
+  "he",
+  "she"
+];
+
+const ARTICLES = [
+  "a",
+  "an",
+  "the"
+];
 
 export function analyze(input) {
-  const raw = input.toLowerCase().trim();
+
+  const raw = String(input || "")
+    .toLowerCase()
+    .trim();
+
   const words = raw.split(/\s+/);
 
-  let structure = {
+  const structure = {
     type: "statement",
     isQuestion: false,
     subject: null,
@@ -21,20 +62,29 @@ export function analyze(input) {
     rawWords: words
   };
 
-  // detect question
-  if (QUESTION_WORDS.some(q => raw.startsWith(q))) {
+  if (
+    QUESTION_WORDS.some(q =>
+      raw.startsWith(q)
+    )
+  ) {
     structure.isQuestion = true;
     structure.type = "question";
   }
 
-  // basic parsing
   words.forEach(word => {
-    if (!structure.subject && PRONOUNS.includes(word)) {
+
+    if (
+      !structure.subject &&
+      PRONOUNS.includes(word)
+    ) {
       structure.subject = word;
       return;
     }
 
-    if (!structure.verb && COMMON_VERBS.includes(word)) {
+    if (
+      !structure.verb &&
+      COMMON_VERBS.includes(word)
+    ) {
       structure.verb = word;
       return;
     }
@@ -42,9 +92,9 @@ export function analyze(input) {
     if (!ARTICLES.includes(word)) {
       structure.object.push(word);
     }
+
   });
 
-  // fallback subject
   if (!structure.subject) {
     structure.subject = "you";
   }
@@ -52,23 +102,59 @@ export function analyze(input) {
   return structure;
 }
 
+export function fixGrammar(input) {
 
-// ✨ BASIC ENGLISH FIXER
-export function fixGrammar(words) {
-  if (!words || words.length === 0) return "";
+  if (!input) {
+    return "";
+  }
 
-  // Capitalize first word
-  words[0] = words[0].charAt(0).toUpperCase() + words[0].slice(1);
+  let words;
 
-  // Fix common shorthand
-  return words
-    .map(w => {
-      if (w === "u") return "you";
-      if (w === "r") return "are";
-      if (w === "wtf") return "what is this";
-      return w;
-    })
-    .join(" ");
+  if (Array.isArray(input)) {
+    words = [...input];
+  } else {
+    words = String(input).split(/\s+/);
+  }
+
+  if (words.length === 0) {
+    return "";
+  }
+
+  words[0] =
+    words[0].charAt(0).toUpperCase() +
+    words[0].slice(1);
+
+  const fixed = words.map(word => {
+
+    const lower = word.toLowerCase();
+
+    if (lower === "u") {
+      return "you";
+    }
+
+    if (lower === "r") {
+      return "are";
+    }
+
+    if (lower === "wtf") {
+      return "what is this";
+    }
+
+    return word;
+
+  });
+
+  let sentence = fixed.join(" ");
+
+  if (
+    !sentence.endsWith(".") &&
+    !sentence.endsWith("?") &&
+    !sentence.endsWith("!")
+  ) {
+    sentence += ".";
+  }
+
+  return sentence;
 }
 
 export const applyGrammar = fixGrammar;
