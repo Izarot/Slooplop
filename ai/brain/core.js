@@ -1,79 +1,118 @@
-// ai/brain/core.js
+// /ai/brain/core.js
 
-import { analyze } from "./language/grammarEngine.js";
-import { build } from "./language/sentenceBuilder.js";
-import { reason } from "./intelligence/reasoner.js";
-import { getKnowledge } from "./intelligence/knowledge.js";
+import { parse }
+from "./language/parser.js";
 
-export function generateResponse(input, memory, mood, profile) {
-  const text = input.trim();
+import { mapConcepts }
+from "./intelligence/conceptMapper.js";
 
-  // store input
-  memory.add("user", text);
+import { reason }
+from "./intelligence/reasoner.js";
 
-  // update systems
-  mood.update(text);
-  profile.update(text);
+import { think }
+from "./intelligence/thoughtEngine.js";
 
-  // analyze structure
-  const structure = analyze(text);
+import { evaluateWorldState }
+from "./world/worldModel.js";
 
-  // reasoning layer
-  const thought = reason(structure, memory);
+import { buildSentence }
+from "./language/sentenceBuilder.js";
 
-  // knowledge layer
-  const knowledge = getKnowledge(thought.topic);
+import { updateGlobalMemory }
+from "./learning/globalMemory.js";
 
-  // memory recall (deterministic)
-  const recalled = memory.recall(text);
-
-  let responseParts = [];
-
-  // 1. memory relevance (only if strong match)
-  if (recalled && recalled !== text) {
-    responseParts.push("You mentioned before: \"" + recalled + "\".");
-  }
-
-  // 2. grammar-based base response
-  const base = build(structure, memory);
-  responseParts.push(base);
-
-  // 3. inject knowledge if question + topic exists
-  if (structure.isQuestion && knowledge) {
-    responseParts.push(knowledge.explanation);
-  }
-
-  // 4. profile awareness (deterministic)
-  const interest = profile.topInterest();
-  if (interest && interest !== thought.topic) {
-    responseParts.push("You often talk about \"" + interest + "\".");
-  }
-
-  const response = responseParts.join(" ");
-
-  // store output
-  memory.add("ai", response);
-  memory.storePhrase(response);
-
-  return style(response, mood, profile);
-}
+import { detectPatterns }
+from "./learning/patternLearner.js";
 
 
-// deterministic style system
-function style(text, mood, profile) {
-  const tone = profile.dominantTone();
+export async function generateResponse(
+  input,
+  memory,
+  mood,
+  profile
+) {
 
-  if (tone === "friendly") {
-    return text + " 🙂";
-  }
+  // MEMORY
 
-  if (tone === "aggressive") {
-    return text.toUpperCase();
-  }
+  memory.add(
+    "user",
+    input
+  );
 
-  if (tone === "analytical") {
-    return "→ " + text;
-  }
+  mood.update(input);
 
-  return text;
+  profile.update(input);
+
+  // PARSING
+
+  const structure =
+    parse(input);
+
+  // CONCEPTS
+
+  const mappedConcepts =
+    mapConcepts(structure);
+
+  // WORLD MODEL
+
+  const worldState =
+    evaluateWorldState(
+      structure,
+      mappedConcepts
+    );
+
+  // REASONING
+
+  const reasoning =
+    reason(
+      structure,
+      mappedConcepts,
+      worldState
+    );
+
+  // THOUGHT ENGINE
+
+  const thought =
+    think(
+      structure,
+      mappedConcepts,
+      reasoning
+    );
+
+  // LEARNING
+
+  const patterns =
+    detectPatterns(
+      memory,
+      structure
+    );
+
+  // RESPONSE
+
+  const response =
+    buildSentence(
+      structure,
+      mappedConcepts,
+      reasoning,
+      thought,
+      patterns,
+      worldState
+    );
+
+  // STORE AI RESPONSE
+
+  memory.add(
+    "ai",
+    response
+  );
+
+  // GLOBAL LEARNING
+
+  updateGlobalMemory(
+    structure,
+    reasoning,
+    response
+  );
+
+  return response;
 }
