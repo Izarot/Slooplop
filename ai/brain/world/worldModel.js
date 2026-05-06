@@ -1,7 +1,6 @@
 // /ai/brain/world/worldModel.js
 
-import { getCategory }
-from "./categories.js";
+import { getCategory } from "./categories.js";
 
 export function evaluateWorldState(
   structure,
