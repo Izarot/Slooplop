@@ -28,10 +28,6 @@ export function setupInput(
     !sendBtn
   ) {
 
-    console.error(
-      "UI elements missing"
-    );
-
     return;
   }
 
