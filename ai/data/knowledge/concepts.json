@@ -1,35 +1,62 @@
 {
   "water": {
-    "type": "liquid",
+    "type": "noun",
+    "category": "liquid",
+    "meaning": "A transparent liquid essential for life.",
     "properties": [
       "transparent",
       "drinkable",
-      "flowing"
+      "flowing",
+      "wet"
     ],
     "actions": [
       "drink",
       "pour",
       "freeze",
       "evaporate"
+    ],
+    "related": [
+      "river",
+      "rain",
+      "ocean",
+      "liquid"
+    ],
+    "examples": [
+      "I drank water.",
+      "Water filled the glass."
     ]
   },
 
   "sky": {
-    "type": "environment",
+    "type": "noun",
+    "category": "environment",
+    "meaning": "The atmosphere visible above Earth.",
     "properties": [
       "blue",
-      "visible",
-      "atmospheric"
+      "vast",
+      "bright"
     ],
     "actions": [
       "darken",
-      "brighten",
-      "change_color"
+      "change_color",
+      "rain"
+    ],
+    "related": [
+      "cloud",
+      "sun",
+      "storm",
+      "atmosphere"
+    ],
+    "examples": [
+      "The sky is blue.",
+      "The sky became green during the storm."
     ]
   },
 
   "math": {
     "type": "subject",
+    "category": "education",
+    "meaning": "The study of numbers and logical structures.",
     "properties": [
       "logical",
       "numerical",
@@ -39,20 +66,40 @@
       "calculate",
       "solve",
       "prove"
+    ],
+    "related": [
+      "algebra",
+      "geometry",
+      "physics"
+    ],
+    "examples": [
+      "Math develops reasoning.",
+      "She solved a math equation."
     ]
   },
 
   "law": {
     "type": "subject",
+    "category": "society",
+    "meaning": "A system of rules used by societies.",
     "properties": [
-      "argumentative",
       "verbal",
+      "argumentative",
       "social"
     ],
     "actions": [
       "debate",
-      "analyze",
-      "defend"
+      "argue",
+      "analyze"
+    ],
+    "related": [
+      "justice",
+      "court",
+      "rights"
+    ],
+    "examples": [
+      "Law organizes society.",
+      "Lawyers defend people."
     ]
   }
 }
